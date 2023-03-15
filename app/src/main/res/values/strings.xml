@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">GithubAPI</string>
+    <string name="detail_page_title">Detail User</string>
+    <string name="follower">Follower</string>
+    <string name="following">Following</string>
+    <string name="search_hint">Find username...</string>
+    <string name="username">Username Account</string>
+    <string name="search">Search</string>
+    <string name="name">Name</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="section_code">This is tab %1$d</string>
+    <string name="tab_text_1">Follower</string>
+    <string name="tab_text_2">Following</string>
+</resources>

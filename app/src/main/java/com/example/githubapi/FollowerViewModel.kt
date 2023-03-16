@@ -8,16 +8,20 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FollowerViewModel: ViewModel() {
-    private val _users  = MutableLiveData<List<UserFollowerResponseItem>>()
-    val users: LiveData<List<UserFollowerResponseItem>> = _users
+class FollowerViewModel : ViewModel() {
+    private val _follower = MutableLiveData<List<UserFollowerResponseItem>>()
+    val follower: LiveData<List<UserFollowerResponseItem>> = _follower
 
-    private val  _isLoading = MutableLiveData<Boolean>()
-    val isLoading : LiveData<Boolean> = _isLoading
+    private val _following = MutableLiveData<List<UserFollowerResponseItem>>()
+    val following: LiveData<List<UserFollowerResponseItem>> = _following
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
 
     var username = String()
 
-    companion object{
+
+    companion object {
         private const val TAG = "FollowerViewModel"
         const val EXTRA_USERNAME = "username"
     }
@@ -29,20 +33,24 @@ class FollowerViewModel: ViewModel() {
     fun getFollower(username: String) {
         _isLoading.value = true
         val client = ApiConfig.getApiService().getUserFollowers(username)
-        client.enqueue(object : Callback<UserFollowerResponse> {
+        client.enqueue(object : Callback<List<UserFollowerResponseItem>> {
             override fun onResponse(
-                call: Call<UserFollowerResponse>,
-                response: Response<UserFollowerResponse>
-            ){
+                call: Call<List<UserFollowerResponseItem>>,
+                response: Response<List<UserFollowerResponseItem>>
+            ) {
                 _isLoading.value = false
-                if(response.isSuccessful){
-                    _users.value = response.body()?.userFollowerResponse
-                }else {
+                if (response.isSuccessful) {
+                    Log.d("Response body: Follower", response.body().toString())
+                    _follower.value = response.body()
+                } else {
                     Log.e(FollowerViewModel.TAG, "onSucces: ${response.message()}")
                 }
             }
 
-            override fun onFailure(call: retrofit2.Call<UserFollowerResponse>, t: Throwable) {
+            override fun onFailure(
+                call: retrofit2.Call<List<UserFollowerResponseItem>>,
+                t: Throwable
+            ) {
                 _isLoading.value = false
                 Log.e(FollowerViewModel.TAG, "onFailure: ${t.message.toString()}")
             }
@@ -52,20 +60,24 @@ class FollowerViewModel: ViewModel() {
     fun getFollowing(username: String) {
         _isLoading.value = true
         val client = ApiConfig.getApiService().getUserFollowing(username)
-        client.enqueue(object : Callback<UserFollowerResponse> {
+        client.enqueue(object : Callback<List<UserFollowerResponseItem>> {
             override fun onResponse(
-                call: Call<UserFollowerResponse>,
-                response: Response<UserFollowerResponse>
-            ){
+                call: Call<List<UserFollowerResponseItem>>,
+                response: Response<List<UserFollowerResponseItem>>
+            ) {
                 _isLoading.value = false
-                if(response.isSuccessful){
-                    _users.value = response.body()?.userFollowerResponse
-                }else {
+                if (response.isSuccessful) {
+                    Log.d("Response body: Following", response.body().toString())
+                    _following.value = response.body()
+                } else {
                     Log.e(FollowerViewModel.TAG, "onSucces: ${response.message()}")
                 }
             }
 
-            override fun onFailure(call: retrofit2.Call<UserFollowerResponse>, t: Throwable) {
+            override fun onFailure(
+                call: retrofit2.Call<List<UserFollowerResponseItem>>,
+                t: Throwable
+            ) {
                 _isLoading.value = false
                 Log.e(FollowerViewModel.TAG, "onFailure: ${t.message.toString()}")
             }

@@ -15,12 +15,10 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class DetailUserActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityDetailUserBinding
+    private lateinit var binding: ActivityDetailUserBinding
     private lateinit var viewModel: DetailUserViewModel
-    private var listFollower = ArrayList<String>()
-    private var listFollowing = ArrayList<String>()
 
-    companion object{
+    companion object {
         const val EXTRA_USERNAME = "extra_username"
         const val EXTRA_AVATAR = "extra_avatar"
         const val EXTRA_NAME = "extra_name"
@@ -38,53 +36,62 @@ class DetailUserActivity : AppCompatActivity() {
         binding = ActivityDetailUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(DetailUserViewModel::class.java)
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        ).get(DetailUserViewModel::class.java)
         var parameterUserName = intent.getStringExtra(EXTRA_USERNAME)
 
-        if(parameterUserName != null){
+        if (parameterUserName != null) {
             viewModel.getUserDetail(parameterUserName)
+            viewModel.getFollowerSize(parameterUserName)
+            viewModel.getFollowingSize(parameterUserName)
         }
 
-        viewModel.userName.observe(this, {userName ->
-            setUserName(userName)
-        })
+        viewModel.detailUser.observe(this) { userName ->
+            setDetailUser(userName)
+        }
 
-        viewModel.name.observe(this, {name ->
-            setName(name)
-        })
+        viewModel.followerSize.observe(this) { Followersize ->
+            setFollowerSize(Followersize)
+        }
 
-        viewModel.avatarUrl.observe(this, {avatarUrl ->
-            setAvatar(avatarUrl)
-        })
+        viewModel.followingSize.observe(this) { Followingsize ->
+            setFollowingSize(Followingsize)
+        }
 
-        viewModel.isLoading.observe(this, {
+        viewModel.isLoading.observe(this) {
             showLoading(it)
-        })
+        }
 
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, parameterUserName)
         val viewPager: ViewPager2 = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
-        TabLayoutMediator(tabs, viewPager){ tab, position ->
-            tab.text = resources.getString(TAB_CODES[position])
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
+            if (position == 1) {
+                tab.text = resources.getString(TAB_CODES[position])
+            } else {
+                tab.text = resources.getString(TAB_CODES[position])
+            }
         }.attach()
     }
 
-    private fun setAvatar(avatarUrl: String?) {
+    private fun setDetailUser(userName: DetailUserResponse?) {
         Glide.with(this@DetailUserActivity)
-            .load(avatarUrl)
+            .load(userName?.avatarUrl)
             .into(binding.avatarPhoto)
+        binding.tvUsername.text = userName?.login
+        binding.tvName.text = userName?.name.toString()
     }
 
-    private fun setUserName(username: String){
-        binding.tvUsername.text = username
+    private fun setFollowingSize(followingsize: Int?) {
+        binding.tvFolloingSize.text = followingsize.toString()
     }
 
-    private fun setName(name: Any?){
-        if(name != null){
-            binding.tvName.text = name.toString()
-        }
+    private fun setFollowerSize(followersize: Int?) {
+        binding.tvFollowerSize.text = followersize.toString()
     }
 
     private fun showLoading(isLoading: Boolean) {

@@ -34,25 +34,28 @@ class MainActivity : AppCompatActivity() {
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         binding.rvUser.addItemDecoration(itemDecoration)
 
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
-        viewModel.users.observe(this, {listUser ->
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        ).get(MainViewModel::class.java)
+        viewModel.users.observe(this) { listUser ->
             setUsersData(listUser)
-        })
+        }
 
-        viewModel.isLoading.observe(this, {
+        viewModel.isLoading.observe(this) {
             showLoading(it)
-        })
+        }
     }
 
     private fun setUsersData(listUser: List<ItemsItem>) {
-        for (user in listUser){
+        for (user in listUser) {
             listUsers.add(
                 """
                     ${user.avatarUrl};${user.login};${user.name}
                 """.trimIndent()
             )
         }
-            //setting adapter untuk recycler view
+        //setting adapter untuk recycler view
         val adapter = UserAdapter(listUsers)
         adapter.setOnItemClickCallback(object : UserAdapter.OnItemClickCallback {
             override fun onItemClicked(data: List<String>) {

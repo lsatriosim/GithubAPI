@@ -45,7 +45,10 @@ class FollowerFragment : Fragment() {
         Log.d("arguments: position", position.toString())
         Log.d("arguments: username", username.toString())
 
-        followerViewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory()).get(FollowerViewModel::class.java)
+        followerViewModel =
+            ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory()).get(
+                FollowerViewModel::class.java
+            )
         followerViewModel.username = username.toString()
 
         followerViewModel.isLoading.observe(requireActivity()) { loading ->
@@ -54,7 +57,7 @@ class FollowerFragment : Fragment() {
 
         if (position == 1) {
             followerViewModel.getFollower(username.toString())
-            followerViewModel.users.observe(viewLifecycleOwner) {
+            followerViewModel.follower.observe(viewLifecycleOwner) {
                 binding.rvFollower.layoutManager = LinearLayoutManager(requireActivity())
 
                 for (user in it) {
@@ -65,25 +68,25 @@ class FollowerFragment : Fragment() {
                     )
                 }
 
-                for(follower in listFollower){
+                for (follower in listFollower) {
                     Log.d("follower", follower)
                 }
 
                 val adapter = UserAdapter(listFollower)
                 binding.rvFollower.adapter = adapter
             }
-        }else{
+        } else {
             followerViewModel.getFollowing(username.toString())
-            followerViewModel.users.observe(viewLifecycleOwner) {
+            followerViewModel.following.observe(viewLifecycleOwner) {
                 binding.rvFollower.layoutManager = LinearLayoutManager(requireActivity())
                 for (user in it) {
-                    listFollower.add(
+                    listFollowing.add(
                         """
                             ${user.avatarUrl};${user.login}
                         """.trimIndent()
                     )
                 }
-                val adapter = UserAdapter(listFollower)
+                val adapter = UserAdapter(listFollowing)
                 binding.rvFollower.adapter = adapter
             }
         }
